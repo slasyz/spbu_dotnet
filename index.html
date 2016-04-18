@@ -1,0 +1,204 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>.NET CIL (&amp; CLS, CLR, etc.)</title>
+
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/custom.css">
+
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+
+        <style type="text/css">
+            ul{
+                width: 100%;
+            }
+            p.left{
+                width: 100%;
+                text-align: left;
+                margin-left: 3rem !important;
+            }
+            strong{
+                color: #fff;
+            }
+        </style>
+
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <h1>.NET CIL (&amp; CLS, CLR, etc.)</h1>
+                    <h3>Вячеслав Сыроватский, 324 группа</h3>
+                </section>
+                <section id="steps">
+                    <h2>Общий процесс запуска программы:</h2>
+                    
+                    <p class="left">Компиляция:</p>
+                    <ul style="margin-bottom: 1rem;">
+                        <li>исходный код транслируется в CIL;</li>
+                        <li>CIL транслируется в байт-код.</li>
+                    </ul>
+
+                    <p class="left">Запуск:</p>
+                    <ul>
+                        <li>с помощью JIT-компилятора генерируется нативный код;</li>
+                        <li>процессор исполняет нативный код.</li>
+                    </ul>
+
+                    <aside class="notes">
+                        распространяется либо байт-код; либо нативный код, но ценой переносимости
+                    </aside>
+                </section>
+                <section id="cli">
+                    <h2>Common Language Infrastructure</h2>
+
+                    <ul>
+                        <li>спецификация, разработанная Microsoft и описывающая среду, позволяющую запускать множество высокоуровневых языков на разных платформах без адаптации кода под конкретные платформы;</li>
+                        <li>основные реализации: <strong>.NET Framework</strong> (от Microsoft), <strong>Mono</strong> (от Xamarin), <strong>Portable.NET</strong> (от GNU Project).</li>
+                    </ul>
+                </section>
+                <section id="cli-parts">
+                    <h2>CLI состоит из:</h2>
+
+                    <ul>
+                        <li>The <strong>Common Type System</strong> <em>(CTS)</em> описывает типы (классы, интерфейсы, стуктуры, встроенные типы данных);</li>
+                        <li>The <strong>Metadata</strong> <em>(метаданные)</em> &mdash; информация о структуре программы, позволяющая компоновать участки кода, написанные на разных языках;</li>
+                        <li>The <strong>Common Language Specification</strong> <em>(CLS)</em> описывает основные правила, которым должны удовлетворять языки платформы;</li>
+                        <li>The <strong>Virtual Execution System</strong> <em>(VES)</em> описывает среду, которая загружает и исполняет CLI-совместимые программы.</li>
+                    </ul>
+                </section>
+                <section id="cts">
+                    <h2>Common Type System</h2>
+
+                    <ul>
+                        <li>описывает типы, способ их хранения в памяти, наследование, виртуальные методы, время жизни объекта;</li>
+                        <li>нужна, чтобы части программы, написанные на разных языках, могли легко взаимодействовать друг с другом;</li>
+                        <li>тип может быть описан множеством своих значений и набором операций, которые можно совершать над этими значениями;</li>
+                        <li>есть <strong>типы значений</strong> (хранят напрямую своё значение в стеке или структуре), а есть <strong>ссылочные типы</strong> (представляют собой ссылку на элемент в куче).</li>
+                    </ul>
+                </section>
+                <section id="metadata">
+                    <h2>Metadata</h2>
+
+                    <ul>
+                        <li>компилятор CLI-совместимого языка генерирует метаданные и добавлям его в CIL-сборку;</li>
+
+                        <li>но разработчик может и сам добавлять метаданные с помощью атрибутов (перед классом, методом, полем):
+                            <pre><code class="hljs" data-trim>
+[Custom]
+[Custom(1)]
+[Custom(1, Comment="yes")]
+                            </code></pre>
+                        </li>
+
+                        <li><strong>пользовательский атрибут</strong> &mdash; обычный класс, наследующийся от класса <code>Attribute</code>;</li>
+
+                        <li>читать метаданные можно с помощью <strong>рефлексии</strong>.</li>
+                    </ul>
+                </section>
+                <section id="cls">
+                    <h2>Common Language Specification</h2>
+
+                    <ul>
+                        <li>описывает, из каких символов могут состоять идентификаторы;</li>
+                        <li>необходимые свойства языка, например: типы, методы, свойства, события, указатели, массивы, исключения, обобщения.</li>
+                    </ul>
+                </section>
+                <section id="ves">
+                    <h2>Virtual Execution System</h2>
+
+                    <ul>
+                        <li>объединяет участки кода, написанные на различных языках;</li>
+                        <li>транслирует CIL в нативный код и запускает его;</li>
+                        <li><strong>Common Runtime System</strong> &mdash; реализация этого стандарта, распространяемая в составе .NET Framework.</li>
+                    </ul>
+                </section>
+
+
+                <section id="cil">
+                    <h2>Common Intermediate Language</h2>
+
+                    <ul>
+                        <li>низкоуровневый, человекочитаемый, объектно-ориентированный язык программирования;</li>
+                        <li>стековый: данные хранятся в стеке, а не в регистрах;</li>
+                        <li>синтаксис и мнемоника языка CIL описываются стандартом «ECMA-335».</li>
+                    </ul>
+
+                    <aside class="notes">
+                        ранее назывался MSIL
+                    </aside>
+                </section>
+
+                <section id="cil-example">
+                    <h2>Common Intermediate Language</h2>
+
+                    <pre><code class="hljs nohighlight" data-trim>
+.class public Foo
+{
+    .method public static int32 Add(int32, int32) cil managed
+    {
+        .maxstack 2
+        ldarg.0 // load the first argument;
+        ldarg.1 // load the second argument;
+        add     // add them;
+        ret     // return the result;
+    }
+}
+                    </code></pre>
+                </section>
+
+                <section id="cil-helloworld">
+                    <h2>Common Intermedia Language</h2>
+
+                    <pre><code class="hljs nohighlight" data-trim>
+.assembly Hello {}
+.assembly extern mscorlib {}
+.method static void Main()
+{
+    .entrypoint
+    .maxstack 1
+    ldstr "Hello, world!"
+    call void [mscorlib]System.Console::WriteLine(string)
+    ret
+}
+                    </code></pre>
+                </section>
+                <section id="thx">
+                    <h1>Спасибо за внимание!</h1>
+                </section>
+            </div>
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.js"></script>
+
+        <script>
+            // More info https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                width: "100%",
+                history: true,
+                mouseWheel: true,
+
+                // More info https://github.com/hakimel/reveal.js#dependencies
+                dependencies: [
+                    { src: 'plugin/markdown/marked.js' },
+                    { src: 'plugin/markdown/markdown.js' },
+                    { src: 'plugin/notes/notes.js', async: true },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+                ]
+            });
+        </script>
+    </body>
+</html>
